@@ -1,0 +1,11 @@
+Functionality overview:
+- sunday, do 0 level dump (date +%u)
+- each day do the next level
+- stamp dump with date (date +%Y%m%d)
+- remove incremental dumps when they are a week old (-mtime +7)
+- if there are any errors, generate output for an email
+
+To do items
+- keep one level 0 dump from each month
+- allow backup up multiple volumes (right now it just does /)
+- backup databases (postgres, maybe mysql)
