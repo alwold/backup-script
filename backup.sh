@@ -1,6 +1,9 @@
 #!/bin/bash
 
 DUMP_DIR="/backups"
+# the postgres dump dir must be writable by the postgres user
+POSTGRES_DUMP_DIR="/backups/postgres"
+POSTGRES_USER="postgres"
 EMAIL="alwold@gmail.com"
 
 dump_level=`date +%w`
@@ -17,7 +20,7 @@ if [ "$?" -ne "0" ]
 fi
 
 # backup postgres
-su -c pg_dumpall postgres > ${DUMP_DIR}/postgres-${date_stamp}.dump 2>>$log_file
+su -c "pg_dumpall -f ${POSTGRES_DUMP_DIR}/postgres-${date_stamp}.dump" ${POSTGRES_USER} &>>$log_file
 if [ "$?" -ne "0" ]
   then errors=1
 fi
@@ -26,6 +29,8 @@ echo "Removing old dumps" >> $log_file
 find $DUMP_DIR -mtime +7 -regex ".+/dump-[1-7]-.+" -print -exec rm {} \; >> $log_file
 
 # TODO keep one level 0 dump from each month
+
+# TODO remove old postgres dumps
 
 if [ "$errors" -ne "0" ]
 then
