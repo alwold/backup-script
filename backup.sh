@@ -17,7 +17,7 @@ if [ "$?" -ne "0" ]
 fi
 
 # backup postgres
-su -c pg_dumpall postgres > pg.dump 2>>$log_file
+su -c pg_dumpall postgres > ${DUMP_DIR}/postgres-${date_stamp}.dump 2>>$log_file
 if [ "$?" -ne "0" ]
   then errors=1
 fi
