@@ -14,12 +14,15 @@ errors=0
 # TODO check if dump volume is mounted?
 
 # backup the root partition
-dump ${dump_level}f ${DUMP_DIR}/dump-${dump_level}-${date_stamp}.dump / &> $log_file
+/sbin/dump ${dump_level}f ${DUMP_DIR}/dump-${dump_level}-${date_stamp}.dump / &> $log_file
 if [ "$?" -ne "0" ]
   then errors=1
 fi
 
 # backup postgres
+mkdir -p $POSTGRES_DUMP_DIR
+chown $POSTGRES_USER $POSTGRES_DUMP_DIR
+cd $POSTGRES_DUMP_DIR
 su -c "pg_dumpall -f ${POSTGRES_DUMP_DIR}/postgres-${date_stamp}.dump" ${POSTGRES_USER} &>>$log_file
 if [ "$?" -ne "0" ]
   then errors=1
@@ -38,5 +41,5 @@ then
   echo "Subject: backup errors" > $mail_file
   echo >> $mail_file
   cat $log_file >> $mail_file
-  sendmail $EMAIL < $mail_file
+  /usr/sbin/sendmail $EMAIL < $mail_file
 fi
