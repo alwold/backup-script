@@ -10,7 +10,14 @@ errors=0
 
 # TODO check if dump volume is mounted?
 
+# backup the root partition
 dump ${dump_level}f ${DUMP_DIR}/dump-${dump_level}-${date_stamp}.dump / &> $log_file
+if [ "$?" -ne "0" ]
+  then errors=1
+fi
+
+# backup postgres
+su -c pg_dumpall postgres > pg.dump 2>>$log_file
 if [ "$?" -ne "0" ]
   then errors=1
 fi
