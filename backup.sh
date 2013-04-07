@@ -29,11 +29,14 @@ if [ "$?" -ne "0" ]
 fi
 
 echo "Removing old dumps" >> $log_file
+# remove anything older than 7 days that isn't level 0
 find $DUMP_DIR -mtime +7 -regex ".+/dump-[1-7]-.+" -print -exec rm {} \; >> $log_file
 
 # TODO keep one level 0 dump from each month
 
-# TODO remove old postgres dumps
+# remove postgres dumps older than 10 days
+# TODO keep like one from each week for the last month
+find $POSTGRES_DUMP_DIR -mtime +10 -print -exec rm {} \; >> $log_file
 
 if [ "$errors" -ne "0" ]
 then
