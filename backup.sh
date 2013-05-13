@@ -4,7 +4,7 @@ DUMP_DIR="/backups"
 # the postgres dump dir must be writable by the postgres user
 POSTGRES_DUMP_DIR="/backups/postgres"
 POSTGRES_USER="postgres"
-EMAIL="alwold@gmail.com"
+EMAIL="alwold@alwold.com"
 
 dump_level=`date +%w`
 date_stamp=`date +%Y%m%d`
