@@ -32,7 +32,19 @@ echo "Removing old dumps" >> $log_file
 # remove anything older than 7 days that isn't level 0
 find $DUMP_DIR -mtime +7 -regex ".+/dump-[1-7]-.+" -print -exec rm {} \; >> $log_file
 
-# TODO keep one level 0 dump from each month
+# keep one level 0 dump from each month
+echo "Removing dumps except for one level 0 for each month" >> $log_file
+for i in `find $DUMP_DIR -maxdepth 1 -mtime +30 -regex ".+/dump-0-.+" | sort`; do
+  prefix=`basename $i`
+  prefix=${prefix:0:13}
+  if [ "$prefix" = "$current_prefix" ]
+  then
+    echo $i >> $log_file
+    rm $i
+  else
+    current_prefix=$prefix
+  fi
+done
 
 # remove postgres dumps older than 10 days
 # TODO keep like one from each week for the last month
