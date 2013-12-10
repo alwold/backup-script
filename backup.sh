@@ -8,7 +8,7 @@ EMAIL="alwold@alwold.com"
 
 dump_level=`date +%w`
 date_stamp=`date +%Y%m%d`
-log_file=${DUMP_DIR}/backup.log.${date_stamp}
+log_file=${DUMP_DIR}/logs/backup.log.${date_stamp}
 errors=0
 
 # TODO check if dump volume is mounted?
