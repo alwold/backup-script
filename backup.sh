@@ -14,7 +14,7 @@ errors=0
 # TODO check if dump volume is mounted?
 
 # backup the root partition
-/sbin/dump ${dump_level}uf ${DUMP_DIR}/dump-${dump_level}-${date_stamp}.dump / &> $log_file
+/sbin/dump -h 0 -${dump_level}uf ${DUMP_DIR}/dump-${dump_level}-${date_stamp}.dump / &> $log_file
 if [ "$?" -ne "0" ]
   then errors=1
 fi
@@ -23,10 +23,14 @@ fi
 mkdir -p $POSTGRES_DUMP_DIR
 chown $POSTGRES_USER $POSTGRES_DUMP_DIR
 cd $POSTGRES_DUMP_DIR
-su -c "pg_dumpall -f ${POSTGRES_DUMP_DIR}/postgres-${date_stamp}.dump" ${POSTGRES_USER} &>>$log_file
-if [ "$?" -ne "0" ]
-  then errors=1
-fi
+for db in `su -c "psql -A -t -c \"select datname from pg_database\"" ${POSTGRES_USER}`; do
+  if [ "$db" != "crawl" ]; then
+    su -c "pg_dump $db | gzip > ${POSTGRES_DUMP_DIR}/$db-${date_stamp}.dump" ${POSTGRES_USER} &>>$log_file
+    if [ "$?" -ne "0" ]
+      then errors=1
+    fi
+  fi
+done
 
 echo "Removing old dumps" >> $log_file
 # remove anything older than 7 days that isn't level 0
