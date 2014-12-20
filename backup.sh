@@ -50,6 +50,9 @@ for i in `find $DUMP_DIR -maxdepth 1 -mtime +30 -regex ".+/dump-0-.+" | sort`; d
   fi
 done
 
+# remove level 0 dumps that are older than a year
+find $DUMP_DIR -mtime +365 -name "dump-0-*" -print -exec rm {} \; >> $log_file
+
 # remove postgres dumps older than 10 days
 # TODO keep like one from each week for the last month
 find $POSTGRES_DUMP_DIR -mtime +10 -print -exec rm {} \; >> $log_file
